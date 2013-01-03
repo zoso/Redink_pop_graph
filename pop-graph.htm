@@ -43,9 +43,8 @@ body {
 }
 
 .chart-wrapper {
-	min-width: 100px;
-	min-height: 100px;
-	/*border: 1px solid #444444;*/
+	position: relative;
+	border: 1px solid #444444;
 	/*overflow: hidden;*/
 	/*style="width: 400px; height: 400px; margin: 0 auto; border: 1px solid #fff;"*/
 }
@@ -64,14 +63,15 @@ body {
 	
 }
 
-.chart-wrapper .pop-chart {
+.pop-chart {
 	position: absolute;
-	top: -10px;
-	right: 10px;
-	/*width: 10px;
+	top: 0px;
+	right: 5px;
+	width: 10px;
 	height: 10px;
-	background-color: #000;
-	cursor: pointer;*/
+	/*background-color: #ccc;*/
+	cursor: pointer;
+	/*border: 1px solid #ff3300;*/
 }
 
 .chart-temp {
@@ -101,9 +101,9 @@ body {
 }
 
 .dialog-open {
-	position: absolute;
+	/*position: absolute;
 	width: 24px;
-	height: 24px;
+	height: 24px;*/
 	/* flip image 180 degrees */
 	-moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
@@ -474,19 +474,6 @@ $(function () {
 			createChartObj(chartObj2);
 		}
 		
-		/* xml structure - hafslund 2011
-		<categories>2008,2009,2010,2011</categories> 
-		<data show_points="off"> 
-			<set type="column" color="" opposite="false"> 
-				<name>Utbytte</name> 
-				<values>2.25,2.25,7.50,2.50</values> 
-				<tooltip></tooltip> 
-			</set> 
-		</data>
-		<xaxis tick_interval="" /> 
-		<yaxis max="null" min="null" /> 
-		*/
-		
 		function createChartObj(obj) {
 			var graphID;
 			if (obj.id == null) {
@@ -499,7 +486,7 @@ $(function () {
 			//check chart heigth and width
 			var w = obj.chart.width == null ? 300 : obj.chart.width;
 			var h = obj.chart.height == null ? 300 : obj.chart.height;
-
+			
 			$("#wrapper").append("<div class=\"chart-wrapper\" style=\"width: "+w+"px; height:"+h+"px;\"><div id=\""+graphID+"\" class=\"loading\">-loading-</div><div class=\"pop-chart\"><a href=\"#\" data-id=\""+chartCount+"\" class=\"dialog-open icon-zoom-in\"></a></div></div><div class=\"spacer\">&nbsp;</div>");
 
 			obj.chart.renderTo = graphID;
