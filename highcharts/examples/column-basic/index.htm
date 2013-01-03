@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+<style>
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #dedede;
+}
+
+#pop {
+	position: relative;
+	width: 800px;
+	height: 600px;
+	background-color: #dedede;
+	z-index: 200;	
+}
+
+#mask {
+	position:absolute;
+	z-index:9000;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	display:none;
+	background-color: #333333;
+}
+
+#wrapper {
+	margin: 10px;
+}
+
+.window {
+  position:fixed;
+  width:800px;
+  height:400px;
+  display:none;
+  z-index:9999;
+  padding:20px;
+}
+
+.chart-wrapper {
+	position: relative;
+	width: 400px;
+	height: 400px;
+	/*style="width: 400px; height: 400px; margin: 0 auto; border: 1px solid #fff;"*/
+}
+
+.chart-wrapper .pop-chart {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	/*width: 10px;
+	height: 10px;
+	background-color: #000;
+	cursor: pointer;*/
+}
+
+.chart-temp {
+	position: relative;
+	width: 32px;
+	height: 32px;
+	background: url(../../../img/page_text_chart.png) no-repeat;
+	margin: 0 auto;
+}
+ 
+ 
+/* Customize your modal window here, you can add background image too */
+#dialog-wrapper {
+  background-color: #cccccc;
+}
+
+.dialog-close {
+	position: absolute;
+	background: url(../../../img/ico-close-button.png) no-repeat;
+	width: 24px;
+	height: 24px;
+	top: -12px;
+	right: -12px;
+	cursor: pointer;
+}
+
+.dialog-open {
+	position: absolute;
+	background: url(../../../img/ico-zoom-button.png) no-repeat;
+	width: 24px;
+	height: 24px;
+}
+
+
+
+.spacer {
+	height: 20px;	
+}
+
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Highcharts Example</title>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="../../../js/jQuery.ChartPop.js"></script>
+<script type="text/javascript">
+$(function () {
+    var chart_1, chart_2;
+	var chartArr = [];
+	var mask = $("#mask");
+    $(document).ready(function() {
+        chart_1 = new Highcharts.Chart(chartObj1);
+		chart_2 = new Highcharts.Chart(chartObj2);
+		chartArr.push({"cid":chart_1, "obj": chartObj1} , {"cid":chart_2, "obj": chartObj2});
+		
+		$(".pop-chart a").on("click", function(e) {
+			e.preventDefault();
+			var $this = $(this);
+			var id = parseInt($this.attr("id"));
+			var div = $this.parent().siblings("div");
+			//console.log(">  div  > "+div.attr("id"));
+			div.chartpop({obj: chartArr[id].cid});
+			//div.addClass("chart-temp");
+		});
+    }); //doc ready
+    
+});
+</script>
+</head>
+<body>
+<script src="../../js/highcharts.js"></script>
+<script src="../../js/modules/exporting.js"></script>
+<script src="../../../js/Charts.js"></script>
+
+<div id="mask"></div>
+<div id="wrapper">
+    <div>PopUp grafer</div>
+    <div class="chart-wrapper">
+        <div id="container-1">
+            
+        </div>
+        <div class="pop-chart"><a href="#" id="0" class="dialog-open"></a></div>
+    </div>
+    <div class="spacer">&nbsp;</div>
+    <div class="chart-wrapper">
+        <div id="container-2">
+            
+        </div>
+        <div class="pop-chart"><a href="#" id="1" class="dialog-open"></a></div>
+    </div>
+    <div id="dialog-wrapper" class="window">
+        <div id="dialog">
+        
+        </div>
+        <div><a href="#" class="dialog-close"></a></div>
+    </div>
+</div>
+</body>
+</html>

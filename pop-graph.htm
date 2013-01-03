@@ -1,0 +1,557 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+<style>
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #fff;
+}
+
+#pop {
+	position: relative;
+	width: 800px;
+	height: 600px;
+	background-color: #dedede;
+	z-index: 200;	
+}
+
+#mask {
+	position:absolute;
+	z-index:9000;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	display:none;
+	background-color: #333333;
+}
+
+#wrapper {
+	margin: 10px;
+}
+
+.window {
+  position:fixed;
+ /* width:800px;
+  height:400px;*/
+  display:none;
+  z-index:9999;
+  padding:20px;
+}
+
+.chart-wrapper {
+	min-width: 100px;
+	min-height: 100px;
+	/*border: 1px solid #444444;*/
+	/*overflow: hidden;*/
+	/*style="width: 400px; height: 400px; margin: 0 auto; border: 1px solid #fff;"*/
+}
+
+.box_shadow {
+	/*width: 374px;
+	min-width: 200px;
+	min-height: 130px;*/
+	/*margin: auto;*/
+	/*background: #ccc;*/
+	/*border: 5px solid white;*/
+	/*position:relative;*/
+	box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.80);
+	-moz-box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.80);
+	-webkit-box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.80);
+	
+}
+
+.chart-wrapper .pop-chart {
+	position: absolute;
+	top: -10px;
+	right: 10px;
+	/*width: 10px;
+	height: 10px;
+	background-color: #000;
+	cursor: pointer;*/
+}
+
+.chart-temp {
+	width: 32px;
+	height: 32px;
+	background: url(img/page_text_chart.png) no-repeat;
+	margin: 0 auto;
+}
+ 
+ 
+/* Customize your modal window here, you can add background image too */
+#dialog-wrapper {
+	  background-color: #fff;
+ 	   -webkit-border-radius: 10px;
+       -moz-border-radius: 10px;
+       border-radius: 10px;
+}
+
+.dialog-close {
+	position: absolute;
+	/*background: url(img/ico-close-button.png) no-repeat;*/
+	width: 24px;
+	height: 24px;
+	top: 5px;
+	right: 5px;
+	cursor: pointer;
+}
+
+.dialog-open {
+	position: absolute;
+	width: 24px;
+	height: 24px;
+	/* flip image 180 degrees */
+	-moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-top: 1px;
+	*margin-right: .3em;
+	line-height: 14px;
+	vertical-align: text-top;
+	background-image: url("img/glyphicons-halflings.png");
+	background-position: 14px 14px;
+	background-repeat: no-repeat;
+}
+
+.icon-zoom-out {
+  	background-position: -360px 0;
+}
+
+.icon-zoom-in {
+  	background-position: -336px 0;
+}
+
+.icon-remove-sign {
+  	background-position: -48px -96px;
+}
+
+.spacer {
+	height: 20px;	
+}
+
+.loading {
+	background: url(img/spinner.gif) no-repeat;
+	width: 20px;
+	height: 20px;	
+}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Highcharts PopUp Example</title>
+</head>
+<body>
+<!-- mask overlay on pop up -->
+<div id="mask"></div>
+<div id="wrapper">
+    <div id="info">PopUp grafer</div>
+    <!--<div class="chart-wrapper">
+        <div id="container-1">
+            
+        </div>
+        <div class="pop-chart"><a href="#" id="0" class="dialog-open icon-zoom-in"></a></div>
+    </div>
+    <div class="spacer">&nbsp;</div>
+    -->
+    <div id="dialog-wrapper" class="window box_shadow">
+        <div id="dialog">&nbsp;</div>
+        <div><a href="#" class="dialog-close icon-remove-sign"></a></div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="highcharts/js/highcharts.js?v=1"></script>
+<script src="highcharts/js/modules/exporting.js?v=1"></script>
+<script src="js/Charts.js?v=1"></script>
+<script src="js/jQuery.ChartPop.js?v=2"></script>
+<script type="text/javascript">
+$(function () {
+    var chart_1, chart_2, chart_3;
+	var chartArr = [];
+	var mask = $("#mask");
+	var chartCount = 0;
+	var cloneState = true;
+	
+    $(document).ready(function() {
+        /*chart_1 = new Highcharts.Chart(chartObj1);
+		chart_2 = new Highcharts.Chart(chartObj2);
+		chart_3 = new Highcharts.Chart(chartTest);
+		chart_1.setSize(300, 300);
+		chart_2.setSize(300, 300);
+		chart_3.setSize(300, 300);
+		chartArr.push({"cid":chart_1, "obj": chartObj1} , {"cid":chart_2, "obj": chartObj2}, {"cid": chart_3, "obj": chartTest});*/
+		var $info = $("#info");
+		//test graph
+		createChartObj(chartObj1);
+		$info.html(" loading ");
+		
+		$.ajax({
+			url: 'js/charts.xml',
+			//data: 'ids=' + $('#charts').data('charts'),
+			dataType: 'xml',
+			success: function(xml){
+				parseChartData(xml);
+			}
+		});
+		
+		var chartArray = [];
+		// parsing the chart xml data
+		function parseChartData(xml) {
+			
+			//var highchart;
+			
+			// loop through all charts
+			$(xml).find('chart').each(function(i, chart){
+				
+				// cache element
+				var chart = $(chart);
+				// add container for chart
+				//$('#chart-' + chart.attr('id') + '-wrapper')
+					// .append('<h4>' + chart.attr('title') + '</h4><h5>' + (chart.attr('subtitle').length > 0 ? chart.attr('subtitle') : '&nbsp;') + '</h5><div id="chart-' + chart.attr('id') + '" class="graph-wrapper"></div><p class="zoom-graph"><a href="#zoomChart-' + chart.attr('id') + '" rel="zoom-graph" class="lightview">' + lang[APP.language_code].charts.zoom + '</a></p>');
+					//.append('<h4>' + chart.attr('title') + '</h4><h5>' + (chart.attr('subtitle').length > 0 ? chart.attr('subtitle') : '&nbsp;') + '</h5><div id="chart-' + chart.attr('id') + '" class="graph-wrapper"></div>');
+				
+				// legend options
+				var legendOptions = {
+					y: 0,
+					x: -14,
+					floating: true,
+					verticalAlign: 'bottom',
+					align: 'left',
+					borderRadius: 0,
+					borderWidth: 0,
+					margin: 0,
+					symbolWidth: 5,
+					symbolPadding: 3,
+					style: {
+						padding: 10
+					},
+					itemStyle: {
+						color: '#4E453D',
+						fontSize: 10,
+						fontFace: 'sans-serif',
+						textDecoration: 'none'
+					},
+					itemHoverStyle: {
+						textDecoration: 'none'
+					},
+					itemHiddenStyle: {
+						textDecoration: 'line-through'
+					}
+				};
+				
+				// column width
+				var columnWidth = 15;
+				
+				// set series variable
+				var series  = [];
+				var pieData = [];
+				chart.find('set').each(function(i, data){
+					
+					// check chart type
+					if (chart.attr('type') == 'pie') {
+						
+						var set = [
+							$(data).find('name').text(),
+							parseFloat($(data).find('values').text())
+						];
+						
+						pieData.push(set);
+						
+						set = null;
+						
+						legendOptions.align = 'right';
+						legendOptions.verticalAlign = 'top';
+						legendOptions.layout = 'vertical';
+						legendOptions.x = -10;
+						legendOptions.width = 105;
+						
+					} else if (chart.attr('type') == 'spline') {
+						
+						// parse values as float
+						var values = $(data).find('values').text().split(',');
+						$(values).each(function(i, value){
+							if (parseFloat(value) == 'NaN') {
+								values[i] = null;
+							} else {
+								values[i] = parseFloat(value);
+							}
+						});
+						
+						var set = {
+							name: $(data).find('name').text(),
+							type: $(data).attr('type'),
+							data: values
+						};
+						
+						series.push(set);
+						
+						set = null;
+						
+					} else if (chart.attr('type') == 'column' || chart.attr('type') == 'stacked') {
+						
+						// parse values as float
+						var values = $(data).find('values').text().split(',');
+						$(values).each(function(i, value){
+							if (parseFloat(value) == 'NaN') {
+								values[i] = null;
+							} else {
+								values[i] = parseFloat(value);
+							}
+						});
+						
+						// set data object
+						var set = {
+							name: $(data).find('name').text(),
+							type: ($(data).attr('type').length == 0 ? 'column' : $(data).attr('type')),
+							data: values
+						};
+						
+						// set stack index if stacking is enabled
+						if (chart.attr('type') == 'stacked') set.stack = 0;
+						
+						// push to data array and nullify
+						series.push(set);
+						set = null;
+						
+						// set column width to null if there are too many values
+						if (values.length > 8 || chart.find('data > set[type="column"]').length > 1) columnWidth = null;
+						
+						// disable legend if only one data set
+						if (chart.find('data > set').length == 1) legendOptions.enabled = false;
+						
+					}
+					
+				});
+				
+				if (chart.attr('type') == 'pie') {
+					var set = {
+						type: 'pie',
+						data: pieData
+					};
+					series.push(set);
+				}
+				
+				// marker options
+				var marker_enabled = chart.find('data').attr('show_points') == 'off' ? false : true;
+				
+				// yaxis options
+				var yaxisOption = {
+					title: null,
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					}],
+					endOnTick: true,
+					showLastLabel: true,
+					showFirstLabel: true,
+					labels: {
+						style: {
+							fontSize: '9px'
+						}
+					},
+					max: chart.find('yaxis').attr('max') == 'null' ? null : chart.find('yaxis').attr('max'),
+					min: chart.find('yaxis').attr('min') == 'null' ? null : chart.find('yaxis').attr('min'),
+					maxPadding: 0,
+					minPadding: .1
+				};
+				
+				//Create new graph
+				//highchart = new Highcharts.Chart({
+				createChartObj({
+					chart: {
+						renderTo: 'chart-' + chart.attr('id'),
+						height: 170,
+						width: 230,
+						spacingTop: 5,
+						spacingRight: 0,
+						spacingBottom: 10,
+						spacingLeft: 0,
+						marginBottom: 50,
+						backgroundColor: null
+					},
+					credits: { enabled: false },
+					title: null,
+					colors: ['#005a8a', '#52c5e1', '#34b133', '#a19689', '#80725c', '#d1ccc3', '#141a42'],
+					xAxis: {
+						categories: chart.find('categories').text().split(','),
+						tickmarkPlacement: 'on',
+						tickInterval: (chart.find('xaxis').attr('tick_interval').length == 0 ? null : parseInt(chart.find('xaxis').attr('tick_interval'))),
+						labels: {
+							style: {
+								fontSize: '9px'
+							}
+						}
+					},
+					yAxis: yaxisOption,
+					legend: legendOptions,
+					tooltip: {
+						backgroundColor: '#000',
+						borderWidth: 0,
+						font: '10px sans-serif',
+						style: {
+							color: '#fff',
+							font: 'bold 10px sans-serif'
+						},
+						shadow: false,
+						formatter: function(){
+							if (this.series.type == 'pie') {
+								return this.point.name + ': ' + this.y;
+							} else {
+								return this.x + ': ' + this.y;
+							}
+						}
+					},
+					plotOptions: {
+						series: {
+							stacking: (chart.attr('type') == 'stacked' ? 'normal' : null),
+							marker: {
+								enabled: marker_enabled,
+								radius: 3,
+								states: {
+									hover: {
+										enabled: true
+									}
+								}
+							}
+						},
+						line: {
+							animation: false,
+							shadow: false
+						},
+						column: {
+							animation: false,
+							shadow: false,
+							borderWidth: 0,
+							pointWidth: columnWidth
+						},
+						pie: {
+							animation: false,
+							shadow: false,
+							allowPointSelect: true,
+							cursor: 'pointer',
+							borderWidth: 1,
+							dataLabels: {
+								enabled: false
+							},
+							showInLegend: true,
+							innerSize: '60%',
+							size: '101%',
+							center: ['26%', '56%']
+						},
+						spline: {
+							animation: false,
+							shadow: false
+						}
+					},
+					series: series
+				});
+				
+				// add chart to array
+				//if (chart.attr('id') !== undefined) chartArray[chart.attr('id')] = highchart;
+				
+				// remove loading class to chart wrapper
+				//$('#chart-' + chart.attr('id') + '-wrapper').removeClass('loading');
+				
+				// reuse variable
+				//highchart = null;
+				
+			});
+			$info.html("PopUp grafer");
+			createChartObj(chartObj2);
+		}
+		
+		/* xml structure - hafslund 2011
+		<categories>2008,2009,2010,2011</categories> 
+		<data show_points="off"> 
+			<set type="column" color="" opposite="false"> 
+				<name>Utbytte</name> 
+				<values>2.25,2.25,7.50,2.50</values> 
+				<tooltip></tooltip> 
+			</set> 
+		</data>
+		<xaxis tick_interval="" /> 
+		<yaxis max="null" min="null" /> 
+		*/
+		
+		function createChartObj(obj) {
+			var graphID;
+			if (obj.id == null) {
+				graphID = "graph-container-"+getRandomInt(1, 100);
+			} else {
+				graphID = "graph-container-"+obj.id;
+			}
+			//console.log("container: "+obj.chart.renderTo);
+			//set graph container
+			//check chart heigth and width
+			var w = obj.chart.width == null ? 300 : obj.chart.width;
+			var h = obj.chart.height == null ? 300 : obj.chart.height;
+
+			$("#wrapper").append("<div class=\"chart-wrapper\" style=\"width: "+w+"px; height:"+h+"px;\"><div id=\""+graphID+"\" class=\"loading\">-loading-</div><div class=\"pop-chart\"><a href=\"#\" data-id=\""+chartCount+"\" class=\"dialog-open icon-zoom-in\"></a></div></div><div class=\"spacer\">&nbsp;</div>");
+
+			obj.chart.renderTo = graphID;
+			//console.log("container: "+obj.chart.renderTo);
+
+			obj.navigation = {
+				buttonOptions: {
+					enabled: false
+				}
+			}
+			
+			for (var i in obj) {
+				//console.log("> "+i+" > "+obj[i]);	
+			}
+			//console.log("w: "+w+" > "+h);
+
+			chartCount++;
+			var highchart = new Highcharts.Chart(obj);
+			chartArr.push({"cid":highchart, "obj": obj});
+			highchart.setSize(w, h);
+			$("#wrapper").find("#"+graphID).removeClass("loading");
+		}
+		
+		function getRandomInt (min, max) {
+   			return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+		
+		$(".chart-wrapper .pop-chart a").live("click", function(e) {
+			e.preventDefault();
+			var $this = $(this);
+			var id = parseInt($this.data("id"));
+			var div = $this.parent().siblings("div");
+			//console.log(">  div  > "+id + " > "+chartArr[id].cid);
+			cloneState = (cloneState == false) ? true : false;
+			
+			div.chartpop({
+				obj: 		chartArr[id].cid, 
+				data: 		chartArr[id].obj, 
+				clone: 		cloneState,
+				width: 		800, 
+				height: 	400, 
+				spinner: 	true,
+			});
+			//div.parseXML("test");
+			//div.addClass("chart-temp");
+		});
+		
+		
+		
+    }); //doc ready
+    
+});
+</script>
+
+</html>
